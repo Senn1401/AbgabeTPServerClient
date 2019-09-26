@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class MainServer {
     private ServerSocket serverSocket;
-    private ArrayList<Socket> socketList = new ArrayList<>();
+    private ArrayList<ServerSession> threadList = new ArrayList<>();
 
     public MainServer(int port) {
         try {
@@ -18,12 +18,12 @@ public class MainServer {
     }
 
     public void start() {
+        System.out.println("Server started");
         while (true){
             try {
                 Socket socket = serverSocket.accept();
                 System.out.println("New user started");
-                new ServerSession(socket);
-                socketList.add(socket);
+                threadList.add(new ServerSession(socket, threadList));
             } catch (IOException e) {
                 e.printStackTrace();
             }
