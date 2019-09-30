@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class MainServer {
     private ServerSocket serverSocket;
     private ArrayList<ServerSession> threadList = new ArrayList<>();
+    private ArrayList<ServerSession> connectedUser = new ArrayList<>();
 
     public MainServer(int port) {
         try {
@@ -23,7 +24,9 @@ public class MainServer {
             try {
                 Socket socket = serverSocket.accept();
                 System.out.println("New user started");
-                threadList.add(new ServerSession(socket, threadList));
+                ServerSession user = new ServerSession(socket, threadList, connectedUser);
+                threadList.add(user);
+                connectedUser.add(user);
             } catch (IOException e) {
                 e.printStackTrace();
             }

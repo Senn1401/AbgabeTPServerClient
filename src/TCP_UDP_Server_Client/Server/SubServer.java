@@ -17,10 +17,7 @@ public class SubServer {
             outputToServer.writeObject("SubsServer");
 
             while (true){
-                String in = (String) inputFromServer.readObject();
-                System.out.println("done");
-                System.out.println(in);
-                outputToServer.writeObject(execute_command(in));
+                outputToServer.writeObject(execute_command((String) inputFromServer.readObject()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -32,7 +29,9 @@ public class SubServer {
     private static String execute_command(String command) {
         if (command.equals(prefix + "hi")){
             return "hi";
+        }else if (command.equals(prefix + "stop")){
+            System.exit(0);
         }
-        return "null";
+        return null;
     }
 }
