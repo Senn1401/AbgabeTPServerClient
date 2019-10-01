@@ -64,7 +64,15 @@ public class ServerSession extends Thread
             //Get Username
             try {
                 outputToClient.writeObject("Whats your username?");
-                this.username = (String) inputFromClient.readObject();
+                while (true){
+                    String tempUsername = (String) inputFromClient.readObject();
+                    if (!tempUsername.contains(" ")){
+                        this.username = tempUsername;
+                        outputToClient.writeObject("OK");
+                        break;
+                    }
+                    outputToClient.writeObject("Username can not contain a space");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
