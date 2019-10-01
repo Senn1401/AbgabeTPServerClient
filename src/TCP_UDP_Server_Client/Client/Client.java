@@ -9,6 +9,7 @@ public class Client {
     public static void main(String[] args) {
         try {
             System.out.println("Client started");
+            new UDP_Client();
             String prefix = ".";
             Socket socket = new Socket("0:0:0:0:0:0:0:1", 9485);
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
@@ -27,7 +28,7 @@ public class Client {
             outputToServer.writeObject(".quit");
             socket.close();
         } catch (SocketException e){
-            System.out.println("Server is no longer online");
+            System.out.println("No servers are online");
             System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
