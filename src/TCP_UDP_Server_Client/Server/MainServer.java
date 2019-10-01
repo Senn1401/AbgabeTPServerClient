@@ -6,9 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class MainServer {
-    private ServerSocket serverSocket;
-    private ArrayList<ServerSession> threadList = new ArrayList<>();
-    private ArrayList<ServerSession> connectedUser = new ArrayList<>();
+    private static ServerSocket serverSocket;
+    private static ArrayList<ServerSession> threadList = new ArrayList<>();
+    private static ArrayList<ServerSession> connectedUser = new ArrayList<>();
 
     public MainServer(int port) {
         try {
@@ -18,7 +18,12 @@ public class MainServer {
         }
     }
 
-    public void start() {
+    public static void start(int port) {
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("Server started");
         while (true){
             try {

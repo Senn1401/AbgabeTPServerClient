@@ -9,7 +9,6 @@ public class Client {
     public static void main(String[] args) {
         try {
             System.out.println("Client started");
-            new UDP_Client();
             String prefix = ".";
             Socket socket = new Socket("0:0:0:0:0:0:0:1", 9485);
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
@@ -19,7 +18,9 @@ public class Client {
             String input;
 
             outputToServer.writeObject("Client");
-
+            input = (String) inputFromServer.readObject();
+            System.out.println(input);
+            outputToServer.writeObject(scanner.next());
             while (!(input = scanner.next()).equals(prefix + "quit")){
                 outputToServer.writeObject(input);
                 input = (String) inputFromServer.readObject();
