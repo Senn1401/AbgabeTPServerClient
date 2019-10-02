@@ -19,6 +19,7 @@ public class UDP_Client extends Thread {
             DatagramSocket udpSocket = new DatagramSocket();
             byte[] udpData = new byte[1024];
             DatagramPacket datagramPackage = new DatagramPacket(udpData, udpData.length, InetAddress.getByName("localhost"), 9485);
+            udpSocket.receive(datagramPackage);
             System.out.println(new String(datagramPackage.getData()));
         } catch (SocketException e) {
             e.printStackTrace();

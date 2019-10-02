@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
@@ -32,12 +33,7 @@ public class UDP_Server extends Thread{
                     out += content[i] + " ";
                 }
                 System.out.println(out);
-                String user = content[0].replace("@", "").toLowerCase();
-                for (ServerSession thread : threadList){
-                    if (thread.getUsername().toLowerCase().equals(user)){
-                        System.out.println("found user");
-                    }
-                }
+                DatagramPacket sendPackage = new DatagramPacket(recivedData, recivedData.length, InetAddress.getByName("localhost"), 9486);
 
             }
         } catch (SocketException e) {
