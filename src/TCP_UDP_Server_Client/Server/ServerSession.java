@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ServerSession extends Thread
+public class ServerSession extends Thread implements Serializable
 {
     private Socket socket;
     private String commandPrefix = ".";
@@ -52,6 +52,7 @@ public class ServerSession extends Thread
         super.run();
         try {
             this.entity = (String) inputFromClient.readObject();
+            //outputToClient.writeObject(threadList);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -179,12 +180,11 @@ public class ServerSession extends Thread
     }
     private String executeOnSubServer(String command) throws IOException, ClassNotFoundException {
         for (ServerSession i : threadList){         //go through all servers and search for command
-            if (i.getEntity().equals("SubsServer")){
+            if (i.getEntity().equals("SubServer")){
                 i.outputToClient.writeObject(command);
                 if (command.equals(".stop")) break; //If provided command is .stop shut down subserver
                 String res = (String) i.inputFromClient.readObject();
-                System.out.println(res);
-                if (!res.equals(null)){             //If command was found return the result
+                if (res != null){             //If command was found return the result
                     return res;
                 }
             }

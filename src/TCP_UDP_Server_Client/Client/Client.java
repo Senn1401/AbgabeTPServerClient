@@ -1,13 +1,17 @@
 package TCP_UDP_Server_Client.Client;
 
+import TCP_UDP_Server_Client.Server.ServerSession;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
         try {
+            ArrayList<ServerSession> threadlist;
             System.out.println("Client started");
             String prefix = ".";
             Socket socket = new Socket("0:0:0:0:0:0:0:1", 9485);
@@ -19,6 +23,7 @@ public class Client {
             String username = null;
 
             outputToServer.writeObject("Client");
+            //threadlist = (ArrayList<ServerSession>) inputFromServer.readObject();
 
             while(!(input = (String) inputFromServer.readObject()).equals("OK")){
                 System.out.println(input);

@@ -16,10 +16,11 @@ public class Subserver2 {
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream outputToServer = new ObjectOutputStream(socket.getOutputStream());
 
-            outputToServer.writeObject("SubServer2");
+            outputToServer.writeObject("SubServer");
 
             while (true){
-                outputToServer.writeObject(execute_command((String) inputFromServer.readObject()));
+                String ret = execute_command((String) inputFromServer.readObject());
+                outputToServer.writeObject(ret);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -27,11 +28,12 @@ public class Subserver2 {
             e.printStackTrace();
         }
     }
-    private static String getDiskSpace(String driveLetter) {
-        if(driveLetter == null || driveLetter == " " || driveLetter == "") {
+    private static String getDiskSpace(String command) {
+        String[] driveLetter = command.split(" ");
+        if(driveLetter[1] == null || driveLetter[1] == " " || driveLetter[1] == "") {
             return "Driveletter didn't found";
         }
-        File file = new File(driveLetter);
+        File file = new File(driveLetter[1]);
         long totalSpace = file.getTotalSpace(); //total disk space in bytes.
         long usableSpace = file.getUsableSpace(); ///unallocated / free disk space in bytes.
         long freeSpace = file.getFreeSpace(); //unallocated / free disk space in bytes.
@@ -56,13 +58,11 @@ public class Subserver2 {
         return sb.toString();
     }
     private static String execute_command(String command) {
-        String[] result = command.split(" ");
-        if (command.equals(prefix + "diskSpace")) return getDiskSpace(result[1]); //return free disk space,
+        if (command.equals(prefix + "diskSpace")) return getDiskSpace(command); //return free disk space,
         else if(command.equals(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
         else if(command.equals(prefix + "cpu")) return getCpuUsage();
-        else if (command.equals(prefix + "stop"))
-            System.exit(0);
-
+        else if (command.equals(prefix + "stop")) System.exit(0);
+        else if (command.equals(prefix + "whoAmI")) return "senn";
         return null;
     }
 }

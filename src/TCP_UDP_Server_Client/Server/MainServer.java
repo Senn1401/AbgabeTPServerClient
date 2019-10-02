@@ -25,7 +25,6 @@ public class MainServer {
             e.printStackTrace();
         }
         System.out.println("Server started");
-        new UDP_Server(threadList);
         while (true){
             try {
                 Socket socket = serverSocket.accept();

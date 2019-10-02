@@ -14,7 +14,7 @@ public class SubServer {
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream outputToServer = new ObjectOutputStream(socket.getOutputStream());
 
-            outputToServer.writeObject("SubsServer");
+            outputToServer.writeObject("SubServer");
 
             while (true){
                 outputToServer.writeObject(execute_command((String) inputFromServer.readObject()));
