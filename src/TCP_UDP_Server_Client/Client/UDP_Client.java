@@ -1,14 +1,18 @@
 package TCP_UDP_Server_Client.Client;
 
+import TCP_UDP_Server_Client.Server.ServerSession;
+
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class UDP_Client extends Thread {
     private String username;
-
+    private ArrayList<ServerSession> threadList;
     public UDP_Client(String username){
-        System.out.println("Hello");
+        System.out.println("UDP Client started");
         this.username = username;
+        //this.threadList = threadList;
         this.start();
     }
 
