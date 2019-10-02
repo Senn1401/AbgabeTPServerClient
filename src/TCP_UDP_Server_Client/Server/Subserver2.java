@@ -28,7 +28,7 @@ public class Subserver2 {
         }
     }
     private static String getDiskSpace(String driveLetter) {
-        if(driveLetter == null || driveLetter == " " || driveLetter == "") {
+        if(driveLetter == null || driveLetter == " " || driveLetter == "") { //just check if there was an input
             return "Driveletter didn't found";
         }
         File file = new File(driveLetter);
@@ -49,9 +49,9 @@ public class Subserver2 {
         long freeMemory = runtime.freeMemory();
 
         sb.append("free memory: " + format.format(freeMemory / 1024) + "\\n");
-        sb.append("allocated memory: " + format.format(allocatedMemory / 1024) + "<br/>");
-        sb.append("max memory: " + format.format(maxMemory / 1024) + "<br/>");
-        sb.append("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024) + "<br/>");
+        sb.append("allocated memory: " + format.format(allocatedMemory / 1024) + "\\n");
+        sb.append("max memory: " + format.format(maxMemory / 1024) + "\\n");
+        sb.append("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024) + "\\n");
 
         return sb.toString();
     }
@@ -60,8 +60,7 @@ public class Subserver2 {
         if (command.equals(prefix + "diskSpace")) return getDiskSpace(result[1]); //return free disk space,
         else if(command.equals(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
         else if(command.equals(prefix + "cpu")) return getCpuUsage();
-        else if (command.equals(prefix + "stop"))
-            System.exit(0);
+        else if (command.equals(prefix + "stop")) System.exit(0);
 
         return null;
     }

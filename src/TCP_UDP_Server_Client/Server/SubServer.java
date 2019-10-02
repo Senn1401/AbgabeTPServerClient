@@ -29,7 +29,8 @@ public class SubServer {
     private static String execute_command(String command) {
         if (command.equals(prefix + "hi")){
             return "hi";
-        } else if (command.equals(prefix + "stop")){
+        }
+        else if (command.equals(prefix + "stop")){
             System.exit(0);
         }
         return null;
