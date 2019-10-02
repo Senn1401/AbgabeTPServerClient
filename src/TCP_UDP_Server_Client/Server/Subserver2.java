@@ -29,7 +29,8 @@ public class Subserver2 {
     }
     private static String getDiskSpace(String command) {
         String[] driveLetter = command.split(" ");
-        if(driveLetter[1] == null || driveLetter[1] == " " || driveLetter[1] == "") {
+        driveLetter[1].replace(":", "");
+        if(driveLetter[1] == null || driveLetter[1] == " " || driveLetter[1] == "") { //check if any driveletter is given
             return "Driveletter didn't found";
         }
         File file = new File(driveLetter[1]);
@@ -39,9 +40,8 @@ public class Subserver2 {
 
         return " === Partition Detail === \\n" + "Total size : " + totalSpace /1024 /1024 + " mb \\n" + "Space free : " + usableSpace /1024 /1024 + " mb \\n" + "Space free : " + freeSpace /1024 /1024 + " mb \\n";
     }
-    public static String getCpuUsage() {
+    public static String getRamUsage() { //method to get actual memory usage
         Runtime runtime = Runtime.getRuntime();
-
         NumberFormat format = NumberFormat.getInstance();
 
         StringBuilder sb = new StringBuilder();
@@ -59,7 +59,7 @@ public class Subserver2 {
     private static String execute_command(String command) {
         if (command.equals(prefix + "diskSpace")) return getDiskSpace(command); //return free disk space,
         else if(command.equals(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
-        else if(command.equals(prefix + "cpu")) return getCpuUsage();
+        else if(command.equals(prefix + "Ram")) return getRamUsage();
         else if (command.equals(prefix + "stop")) System.exit(0);
         else if (command.equals(prefix + "whoAmI")) return "senn";
         return null;
