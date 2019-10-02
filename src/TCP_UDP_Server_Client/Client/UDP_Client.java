@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.*;
 
 public class UDP_Client extends Thread {
+    private String username;
 
-    public UDP_Client(){
+    public UDP_Client(String username){
+        System.out.println("Hello");
+        this.username = username;
         this.start();
     }
 
