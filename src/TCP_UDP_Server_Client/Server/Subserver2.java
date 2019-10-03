@@ -57,11 +57,12 @@ public class Subserver2 {
         return sb.toString();
     }
     private static String execute_command(String command) {
-        if (command.equals(prefix + "diskSpace")) return getDiskSpace(command); //return free disk space,
-        else if(command.equals(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
-        else if(command.equals(prefix + "Ram")) return getRamUsage();
-        else if (command.equals(prefix + "stop")) System.exit(0);
-        else if (command.equals(prefix + "whoAmI")) return "senn";
+            command = command.split(" ")[0];
+        if (command.contains(prefix + "diskSpace")) return getDiskSpace(command); //return free disk space,
+        else if(command.contains(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
+        else if(command.contains(prefix + "Ram")) return getRamUsage();
+        else if (command.contains(prefix + "stop")) System.exit(0);
+        else if (command.contains(prefix + "whoAmI")) return "senn";
         return null;
     }
 }
