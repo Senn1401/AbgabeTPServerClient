@@ -4,9 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 public class ServerSession extends Thread
 {
@@ -21,6 +19,8 @@ public class ServerSession extends Thread
     private boolean auth;
     private String entity;
     private String username;
+    private HashMap<String, Integer> map;
+    private int port;
 
     public String getUsername() {
         return username;
@@ -30,13 +30,14 @@ public class ServerSession extends Thread
         return entity;
     }
 
-    public ServerSession(Socket socket, ArrayList<ServerSession> threadList, ArrayList<ServerSession> connectedUsers) {
+    public ServerSession(Socket socket, ArrayList<ServerSession> threadList, ArrayList<ServerSession> connectedUsers, HashMap<String, Integer> map, int port) {
         try {
             this.threadList = threadList;
             this.socket = socket;
             this.outputToClient = new ObjectOutputStream(socket.getOutputStream());
             this.inputFromClient = new ObjectInputStream(socket.getInputStream());
             this.connectedUsers = connectedUsers;
+            this.map = map;
             this.start();
         } catch (IOException e) {
             System.err.println("IOExeption: Could not create Reader, Writer or could not start Thread");
@@ -52,7 +53,6 @@ public class ServerSession extends Thread
         super.run();
         try {
             this.entity = (String) inputFromClient.readObject();
-            //outputToClient.writeObject(threadList);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -72,6 +72,8 @@ public class ServerSession extends Thread
                     }
                     outputToClient.writeObject("Username can not contain a space");
                 }
+                outputToClient.writeObject(port);
+                map.put(username, port);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

@@ -1,19 +1,15 @@
 package TCP_UDP_Server_Client.Client;
 
-import TCP_UDP_Server_Client.Server.ServerSession;
-
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.*;
-import java.util.ArrayList;
+import java.net.InetSocketAddress;
 
 public class UDP_Client extends Thread {
     private String username;
     private ObjectOutputStream outputToServer;
     private ObjectInputStream inputFromServer;
 
-    public UDP_Client(String username, ObjectInputStream inputFromServer, ObjectOutputStream outputToServer){
+    public UDP_Client(String username, ObjectInputStream inputFromServer, ObjectOutputStream outputToServer, int port){
         this.inputFromServer = inputFromServer;
         this.outputToServer = outputToServer;
         this.username = username;

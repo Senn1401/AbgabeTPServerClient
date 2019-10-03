@@ -21,6 +21,7 @@ public class Client {
             scanner.useDelimiter("\n");
             String input;
             String username = null;
+            int port;
 
             outputToServer.writeObject("Client");
             //threadlist = (ArrayList<ServerSession>) inputFromServer.readObject();
@@ -32,7 +33,8 @@ public class Client {
             }
             System.out.println(input);
 
-            new UDP_Client(username, inputFromServer, outputToServer);
+            port = Integer.parseInt((String) inputFromServer.readObject());
+            new UDP_Client(username, inputFromServer, outputToServer, port);
 
             while (!(input = scanner.next()).equals(prefix + "quit")){
                 outputToServer.writeObject(input);
