@@ -29,29 +29,38 @@ public class SubServer {
         }
     }
     private static String getFiles(String command) { //return list of all files and subdirs in a given dir
-        String path = command.split(" ")[1];
+        String[] path = command.split(" ");
         String ret = null;
-        if(path == null || path == " " || path == "") {
+
+        try {
+            if(path == null || path[1] == " " || path[1] == "") {
+                return "No path given";
+            }
+
+            File folder = new File(path[1]);
+            File[] listOfFiles = folder.listFiles();
+
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    ret += "File: " + listOfFiles[i].getName().toString() + "\n";
+                } else if (listOfFiles[i].isDirectory()) {
+                    ret += "Directory: " + listOfFiles[i].getName().toString() + "\n";
+                }
+            }
+            return ret;
+        }
+        catch (NullPointerException e) {
             return "No path given";
         }
-        File folder = new File(path);
-        File[] listOfFiles = folder.listFiles();
-
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                ret += "File: " + listOfFiles[i].getName().toString() + "\\n";
-            } else if (listOfFiles[i].isDirectory()) {
-                ret += "Directory: " + listOfFiles[i].getName().toString() + "\\n";
-            }
+        catch (IndexOutOfBoundsException e) {
+            return "No path given";
         }
-        return ret;
     }
     private static String execute_command(String command) {
         if (command.contains(prefix + "hi")) {
             return "hi";
         }
         else if(command.contains(prefix + "files")) {
-            //return "files";
             return getFiles(command);
         }
         else if(command.contains(prefix + "username"))
