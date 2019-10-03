@@ -61,7 +61,6 @@ public class Subserver2 {
         else if(command.equals(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
         else if(command.equals(prefix + "Ram")) return getRamUsage();
         else if (command.equals(prefix + "stop")) System.exit(0);
-        else if (command.equals(prefix + "whoAmI")) return "senn";
         return null;
     }
 }

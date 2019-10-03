@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ServerSession extends Thread implements Serializable
+public class ServerSession extends Thread
 {
     private Socket socket;
     private String commandPrefix = ".";
@@ -96,13 +96,14 @@ public class ServerSession extends Thread implements Serializable
         }
     }
 
-    private void chat(String command) throws IOException {
+    private String chat(String command) throws IOException {
         DatagramSocket sendSocket = new DatagramSocket();
         byte[] sendData = command.getBytes();
+        System.out.println(new String(sendData));
         InetAddress ip = InetAddress.getByName("localhost");
         DatagramPacket sendPackage = new DatagramPacket(sendData, sendData.length, ip, 9486);
         sendSocket.send(sendPackage);
-
+        return "";
     }
 
     public ObjectInputStream getInputFromClient() {

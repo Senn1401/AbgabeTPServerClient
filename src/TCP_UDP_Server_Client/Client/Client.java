@@ -30,8 +30,9 @@ public class Client {
                 username = scanner.next();
                 outputToServer.writeObject(username);
             }
+            System.out.println(input);
 
-            new UDP_Client(username);
+            new UDP_Client(username, inputFromServer, outputToServer);
 
             while (!(input = scanner.next()).equals(prefix + "quit")){
                 outputToServer.writeObject(input);
