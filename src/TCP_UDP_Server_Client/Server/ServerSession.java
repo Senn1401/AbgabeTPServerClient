@@ -20,7 +20,7 @@ public class ServerSession extends Thread
     private String entity;
     private String username;
     private HashMap<String, Integer> map;
-    private int port;
+    private Integer port;
 
     public String getUsername() {
         return username;
@@ -30,14 +30,14 @@ public class ServerSession extends Thread
         return entity;
     }
 
-    public ServerSession(Socket socket, ArrayList<ServerSession> threadList, ArrayList<ServerSession> connectedUsers, HashMap<String, Integer> map, int port) {
+    public ServerSession(Socket socket, ArrayList<ServerSession> threadList, HashMap<String, Integer> map, Integer port) {
         try {
             this.threadList = threadList;
             this.socket = socket;
             this.outputToClient = new ObjectOutputStream(socket.getOutputStream());
             this.inputFromClient = new ObjectInputStream(socket.getInputStream());
-            this.connectedUsers = connectedUsers;
             this.map = map;
+            this.port = port;
             this.start();
         } catch (IOException e) {
             System.err.println("IOExeption: Could not create Reader, Writer or could not start Thread");
@@ -99,11 +99,22 @@ public class ServerSession extends Thread
     }
 
     private String chat(String command) throws IOException {
+        String[] content = command.split(" ");
         DatagramSocket sendSocket = new DatagramSocket();
-        byte[] sendData = command.getBytes();
+        String data = username + ": ";
+        if (content.length < 2){
+            return "Please provide a message";
+        }
+        for (int i = 1; i < content.length; i++){
+            data += content[i] + " ";
+        }
+        byte[] sendData = data.getBytes();
         System.out.println(new String(sendData));
         InetAddress ip = InetAddress.getByName("localhost");
-        DatagramPacket sendPackage = new DatagramPacket(sendData, sendData.length, ip, 9486);
+        if (!map.containsKey(content[0].replace("@", ""))){
+            return "User not found";
+        }
+        DatagramPacket sendPackage = new DatagramPacket(sendData, sendData.length, ip, map.get(content[0].replace("@", "")));
         sendSocket.send(sendPackage);
         return "";
     }
@@ -121,14 +132,14 @@ public class ServerSession extends Thread
         if (!command.contains(commandPrefix) && !command.contains(chatPrefix)){
             return "Input is not a command";
         }
-        if (command.contains(commandPrefix + "time")) return time(); //return time
-        else if (command.contains(commandPrefix + "date")) return date(); //return date
-        else if (command.contains(commandPrefix + "auth")) return auth(command); //return if authenticated or not
+        if (command.contains(commandPrefix + "time")) return time() + "\n"; //return time
+        else if (command.contains(commandPrefix + "date")) return date() + "\n"; //return date
+        else if (command.contains(commandPrefix + "auth")) return auth(command) + "\n"; //return if authenticated or not
         else if (command.equals(commandPrefix + "stop")) stopServer();
-        else if (command.equals(commandPrefix + "users")) users(); //return all users
-        else if (command.toCharArray()[0] == chatPrefix.toCharArray()[0]) chat(command);
+        else if (command.equals(commandPrefix + "users")) return users(); //return all users
+        else if (command.toCharArray()[0] == chatPrefix.toCharArray()[0]) return chat(command);
         //If command was not found search on subserver for it
-        return executeOnSubServer(command);
+        return executeOnSubServer(command) + "\n";
     }
 
     private String time(){
@@ -174,7 +185,7 @@ public class ServerSession extends Thread
 
     private String users(){
         String s = "";
-        for(ServerSession i : connectedUsers){
+        for(ServerSession i : threadList){
             if (i.getEntity().equals("Client")){
                 s += i.getUsername() + "\n";
             }

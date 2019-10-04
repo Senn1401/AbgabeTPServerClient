@@ -57,12 +57,10 @@ public class SubServer {
         }
     }
     private static String execute_command(String command) {
-<<<<<<< HEAD
         if (command.equals(prefix + "hi")) return "hi";
         else if(command.equals(prefix + "files")) return getFiles(command);
         else if(command.equals(prefix + "username"))return System.getProperty("user.name"); //return Username
-        else if(command.equals(prefix + "hostname" )) {
-=======
+        else if(command.equals(prefix + "hostname" ))
         if (command.contains(prefix + "hi")) {
             return "hi";
         }
@@ -72,7 +70,6 @@ public class SubServer {
         else if(command.contains(prefix + "username"))
             return System.getProperty("user.name"); //return Username
         else if(command.contains(prefix + "hostname" )) {
->>>>>>> github/master
             try {
                 return InetAddress.getLocalHost().getHostName(); //return Hostname
             } catch (UnknownHostException e) {

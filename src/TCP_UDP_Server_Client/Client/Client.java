@@ -12,7 +12,6 @@ public class Client {
     public static void main(String[] args) {
         try {
             ArrayList<ServerSession> threadlist;
-            System.out.println("Client started");
             String prefix = ".";
             Socket socket = new Socket("0:0:0:0:0:0:0:1", 9485);
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
@@ -21,7 +20,7 @@ public class Client {
             scanner.useDelimiter("\n");
             String input;
             String username = null;
-            int port;
+            int port = 0;
 
             outputToServer.writeObject("Client");
             //threadlist = (ArrayList<ServerSession>) inputFromServer.readObject();
@@ -33,13 +32,11 @@ public class Client {
             }
             System.out.println(input);
 
-            port = Integer.parseInt((String) inputFromServer.readObject());
-            new UDP_Client(username, inputFromServer, outputToServer, port);
+            new UDP_Client(username, inputFromServer, outputToServer, (Integer) inputFromServer.readObject());
 
             while (!(input = scanner.next()).equals(prefix + "quit")){
                 outputToServer.writeObject(input);
-                input = (String) inputFromServer.readObject();
-                System.out.println(input);
+                System.out.print(inputFromServer.readObject());
             }
             outputToServer.writeObject(".quit");
             socket.close();
