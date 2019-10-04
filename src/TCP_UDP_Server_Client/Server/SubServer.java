@@ -57,6 +57,10 @@ public class SubServer {
         }
     }
     private static String execute_command(String command) {
+        if (command.equals(prefix + "hi")) return "hi";
+        else if(command.equals(prefix + "files")) return getFiles(command);
+        else if(command.equals(prefix + "username"))return System.getProperty("user.name"); //return Username
+        else if(command.equals(prefix + "hostname" ))
         if (command.contains(prefix + "hi")) {
             return "hi";
         }
@@ -75,11 +79,8 @@ public class SubServer {
                 return "Hostname not found!";
             }
         }
-        else if(command.equals(prefix + "loggedInUser"))
-            return System.getProperty("user.home");
-        else if (command.equals(prefix + "stop")){
-            System.exit(0);
-        }
+        else if(command.equals(prefix + "loggedInUser")) return System.getProperty("user.home");
+        else if (command.equals(prefix + "stop")) System.exit(0);
         return null;
     }
 }
