@@ -28,17 +28,26 @@ public class Subserver2 {
         }
     }
     private static String getDiskSpace(String command) {
-        String[] driveLetter = command.split(" ");
-        driveLetter[1].replace(":", "");
-        if(driveLetter[1] == null || driveLetter[1] == " " || driveLetter[1] == "") { //check if any driveletter is given
-            return "Driveletter didn't found";
-        }
-        File file = new File(driveLetter[1]);
-        long totalSpace = file.getTotalSpace(); //total disk space in bytes.
-        long usableSpace = file.getUsableSpace(); ///unallocated / free disk space in bytes.
-        long freeSpace = file.getFreeSpace(); //unallocated / free disk space in bytes.
+        try {
+            String[] driveLetter = command.split(" ");
+            driveLetter[1].replace(":", "");
+            if(driveLetter[1] == null || driveLetter[1] == " " || driveLetter[1] == "") { //check if any driveletter is given
+                return "Drive didn't found";
+            }
+            File file = new File(driveLetter[1] + ":\\");
+            long totalSpace = file.getTotalSpace(); //total disk space in bytes.
+            long usableSpace = file.getUsableSpace(); ///unallocated / free disk space in bytes.
+            long freeSpace = file.getFreeSpace(); //unallocated / free disk space in bytes.
 
-        return " === Partition Detail === \\n" + "Total size : " + totalSpace /1024 /1024 + " mb \\n" + "Space free : " + usableSpace /1024 /1024 + " mb \\n" + "Space free : " + freeSpace /1024 /1024 + " mb \\n";
+            return " === Partition Detail === \n" + "Total size : " + totalSpace /1024 /1024 + " mb \n" + "Space free : " + usableSpace /1024 /1024 + " mb \n" + "Space free : " + freeSpace /1024 /1024 + " mb \n";
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            return "Drive didn't found";
+        }
+        catch (IndexOutOfBoundsException e) {
+            return "Drive didn't found";
+        }
+        //return  "Error in DiskSpace method";
     }
     public static String getRamUsage() { //method to get actual memory usage
         Runtime runtime = Runtime.getRuntime();
@@ -49,10 +58,10 @@ public class Subserver2 {
         long allocatedMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
 
-        sb.append("free memory: " + format.format(freeMemory / 1024) + "\\n");
-        sb.append("allocated memory: " + format.format(allocatedMemory / 1024) + "\\n");
-        sb.append("max memory: " + format.format(maxMemory / 1024) + "\\n");
-        sb.append("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024) + "\\n");
+        sb.append("free memory: " + format.format(freeMemory / 1024) + "\n");
+        sb.append("allocated memory: " + format.format(allocatedMemory / 1024) + "\n");
+        sb.append("max memory: " + format.format(maxMemory / 1024) + "\n");
+        sb.append("total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024) + "\n");
 
         return sb.toString();
     }
@@ -61,6 +70,11 @@ public class Subserver2 {
         else if(command.equals(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
         else if(command.equals(prefix + "Ram")) return getRamUsage();
         else if (command.equals(prefix + "stop")) System.exit(0);
+        if (command.contains(prefix + "diskSpace")) return getDiskSpace(command); //return free disk space,
+        else if(command.contains(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
+        else if(command.contains(prefix + "Ram")) return getRamUsage();
+        else if (command.contains(prefix + "stop")) System.exit(0);
+        else if (command.contains(prefix + "whoAmI")) return "senn";
         return null;
     }
 }
