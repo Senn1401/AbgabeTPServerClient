@@ -7,16 +7,17 @@ import java.net.Socket;
 import java.text.NumberFormat;
 
 public class Subserver2 {
-    static String prefix = ".";
+    static String prefix = "."; //Prefix for the commands
     public static void main(String[] args){
         try {
             System.out.println("SubServer started");
-            Socket socket = new Socket("0:0:0:0:0:0:0:1", 9485);
+            Socket socket = new Socket("localhost", 9485); //connect to the server
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream outputToServer = new ObjectOutputStream(socket.getOutputStream());
 
-            outputToServer.writeObject("SubServer");
+            outputToServer.writeObject("SubServer"); //send notation to server
 
+            //if command comes from server execute it and send answer
             while (true){
                 outputToServer.writeObject(execute_command((String) inputFromServer.readObject()));
             }
@@ -42,10 +43,10 @@ public class Subserver2 {
 
         return sb.toString();
     }
-    private static String execute_command(String command) {
-        if(command.contains(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount());
-        else if(command.contains(prefix + "Ram")) return getRamUsage();
-        else if (command.contains(prefix + "stop")) System.exit(0);
+    private static String execute_command(String command) { //some commands
+        if(command.contains(prefix + "threads")) return Integer.toString(java.lang.Thread.activeCount()); //return active threads
+        else if(command.contains(prefix + "Ram")) return getRamUsage(); //return ram info
+        else if (command.contains(prefix + "stop")) System.exit(0); //stop subserver
         return null;
     }
 }

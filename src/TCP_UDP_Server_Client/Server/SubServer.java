@@ -9,16 +9,17 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class SubServer {
-    static String prefix = ".";
+    static String prefix = "."; //command prefix
     public static void main(String[] args){
         try {
             System.out.println("SubServer started");
-            Socket socket = new Socket("0:0:0:0:0:0:0:1", 9485);
+            Socket socket = new Socket("localhost", 9485);
             ObjectInputStream inputFromServer = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream outputToServer = new ObjectOutputStream(socket.getOutputStream());
 
-            outputToServer.writeObject("SubServer");
+            outputToServer.writeObject("SubServer"); //send notation to server
 
+            //if command comes from server execute it and send answer
             while (true){
                 outputToServer.writeObject(execute_command((String) inputFromServer.readObject()));
             }
@@ -33,7 +34,7 @@ public class SubServer {
         String ret = null;
 
         try {
-            if(path == null || path[1] == " " || path[1] == "") {
+            if(path == null || path[1] == " " || path[1] == "") { //path was empty
                 return "No path given";
             }
 
@@ -58,20 +59,18 @@ public class SubServer {
     }
     private static String execute_command(String command) {
         if (command.equals(prefix + "hi")) return "hi";
-        else if(command.equals(prefix + "files")) return getFiles(command);
-        else if(command.equals(prefix + "username"))return System.getProperty("user.name"); //return Username
-        else if(command.equals(prefix + "hostname" ))
+        else if(command.equals(prefix + "files")) return getFiles(command); //return
+        else if(command.equals(prefix + "username"))return System.getProperty("user.name"); //return username
+        else if(command.equals(prefix + "hostname" )) //return hostname
         if (command.contains(prefix + "hi")) {
             return "hi";
         }
         else if(command.contains(prefix + "files")) {
             return getFiles(command);
         }
-        else if(command.contains(prefix + "username"))
-            return System.getProperty("user.name"); //return Username
-        else if(command.contains(prefix + "hostname" )) {
+        else if(command.contains(prefix + "hostname" )) { //return Hostname
             try {
-                return InetAddress.getLocalHost().getHostName(); //return Hostname
+                return InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
@@ -79,8 +78,8 @@ public class SubServer {
                 return "Hostname not found!";
             }
         }
-        else if(command.equals(prefix + "loggedInUser")) return System.getProperty("user.home");
-        else if (command.equals(prefix + "stop")) System.exit(0);
+        else if(command.equals(prefix + "loggedInUser")) return System.getProperty("user.home"); //return user information
+        else if (command.equals(prefix + "stop")) System.exit(0); //stop the subserver
         return null;
     }
 }

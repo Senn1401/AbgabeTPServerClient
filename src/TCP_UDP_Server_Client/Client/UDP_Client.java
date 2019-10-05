@@ -1,20 +1,15 @@
 package TCP_UDP_Server_Client.Client;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class UDP_Client extends Thread {
-    private String username;
-    private ObjectOutputStream outputToServer;
-    private ObjectInputStream inputFromServer;
     private int port;
 
-    public UDP_Client(String username, ObjectInputStream inputFromServer, ObjectOutputStream outputToServer, int port){
-        this.inputFromServer = inputFromServer;
-        this.outputToServer = outputToServer;
-        this.username = username;
+    public UDP_Client(int port){
         this.port = port;
         this.start();
     }
@@ -22,35 +17,19 @@ public class UDP_Client extends Thread {
     public void run() {
         super.run();
         try {
-            DatagramSocket datagramSocket = new DatagramSocket(port);
-            byte[] data = new byte[1024];
-            DatagramPacket packet = new DatagramPacket(data, data.length);
+            DatagramSocket datagramSocket = new DatagramSocket(port); //Open UDP connection on the given port
+            byte[] data = new byte[1024]; //where data will be saved
+            DatagramPacket packet = new DatagramPacket(data, data.length); //wait for a package that has a byte array as data with the length given
             while (true){
-                datagramSocket.receive(packet);
-                System.out.println(new String(packet.getData()));
+                datagramSocket.receive(packet); //Wait for message
+                System.out.println(new String(packet.getData())); //print message
             }
         } catch (SocketException e) {
-            e.printStackTrace();
+            System.exit(0); //Close the client if connection is down
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        while (true){
-
-        }
-
-        /*try {
-            DatagramSocket udpSocket = new DatagramSocket(9486);
-            byte[] udpData = new byte[1024];
-            DatagramPacket datagramPackage = new DatagramPacket(udpData, udpData.length);
-            udpSocket.receive(datagramPackage);
-            System.out.println("recived");
-            System.out.println(new String(datagramPackage.getData()));
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 }

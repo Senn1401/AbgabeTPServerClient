@@ -40,40 +40,36 @@ public class ServerSession extends Thread
             this.port = port;
             this.start();
         } catch (IOException e) {
-            System.err.println("IOExeption: Could not create Reader, Writer or could not start Thread");
+            System.err.println("IOExeption: Could not create Reader, Writer or start Thread");
         }
-    }
-
-    public Socket getSocket() {
-        return socket;
     }
 
     @Override
     public void run() {
         super.run();
         try {
-            this.entity = (String) inputFromClient.readObject();
+            this.entity = (String) inputFromClient.readObject(); //get the notation of the connected device
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
-        if (entity.equals("Client")){
+        if (entity.equals("Client")){ //if connected device is a client
             //Get Username
             try {
                 outputToClient.writeObject("Whats your username?");
-                while (true){
+                while (true){ //get username of client
                     String tempUsername = (String) inputFromClient.readObject();
-                    if (!tempUsername.contains(" ")){
+                    if (!tempUsername.contains(" ")){ //if username has correct format send ok
                         this.username = tempUsername;
                         outputToClient.writeObject("OK");
                         break;
                     }
                     outputToClient.writeObject("Username can not contain a space");
                 }
-                outputToClient.writeObject(port);
-                map.put(username, port);
+                outputToClient.writeObject(port); //send client the port for the udp connection
+                map.put(username, port); //create a map of usernames and ports
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
@@ -100,36 +96,28 @@ public class ServerSession extends Thread
 
     private String chat(String command) throws IOException {
         String[] content = command.split(" ");
-        DatagramSocket sendSocket = new DatagramSocket();
-        String data = username + ": ";
-        if (content.length < 2){
+        DatagramSocket sendSocket = new DatagramSocket(); //open connection to the destination port
+        String data = username + ": "; //add the username to the message
+        if (content.length < 2){ //if userinput contains no message and oly username
             return "Please provide a message";
         }
-        for (int i = 1; i < content.length; i++){
+        for (int i = 1; i < content.length; i++){ //concat the data of the message to string
             data += content[i] + " ";
         }
         byte[] sendData = data.getBytes();
-        System.out.println(new String(sendData));
-        InetAddress ip = InetAddress.getByName("localhost");
-        if (!map.containsKey(content[0].replace("@", ""))){
+        InetAddress ip = InetAddress.getByName("localhost"); //get ip of localhost
+        if (!map.containsKey(content[0].replace("@", ""))){ //get port of user
             return "User not found";
         }
+        //send content to destination user connection
         DatagramPacket sendPackage = new DatagramPacket(sendData, sendData.length, ip, map.get(content[0].replace("@", "")));
         sendSocket.send(sendPackage);
         return "";
     }
 
-    public ObjectInputStream getInputFromClient() {
-        return inputFromClient;
-    }
-
-    public ObjectOutputStream getOutputToClient() {
-        return outputToClient;
-    }
-
     //execute Commands send from user
     private String executeCommand(String command) throws IOException, ClassNotFoundException {
-        if (!command.contains(commandPrefix) && !command.contains(chatPrefix)){
+        if (!command.contains(commandPrefix) && !command.contains(chatPrefix)){ //if command not contains valid prefix return
             return "Input is not a command";
         }
         if (command.contains(commandPrefix + "time")) return time() + "\n"; //return time
@@ -192,6 +180,8 @@ public class ServerSession extends Thread
         }
         return s;
     }
+
+    //if server has not found the command send it to a subserver
     private String executeOnSubServer(String command) throws IOException, ClassNotFoundException {
         for (ServerSession i : threadList){         //go through all servers and search for command
             if (i.getEntity().equals("SubServer")){
@@ -203,6 +193,6 @@ public class ServerSession extends Thread
                 }
             }
         }
-        return null;
+        return "Command not found";
     }
 }
