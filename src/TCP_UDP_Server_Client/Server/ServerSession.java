@@ -12,7 +12,6 @@ public class ServerSession extends Thread
     private String commandPrefix = ".";
     private String chatPrefix = "@";
     private ArrayList<ServerSession> threadList;
-    private ArrayList<ServerSession> connectedUsers;
     private ObjectInputStream inputFromClient;
     private ObjectOutputStream outputToClient;
     private static String password = "Kennwort0";
@@ -96,11 +95,11 @@ public class ServerSession extends Thread
 
     private String chat(String command) throws IOException {
         String[] content = command.split(" ");
-        DatagramSocket sendSocket = new DatagramSocket(); //open connection to the destination port
         String data = username + ": "; //add the username to the message
         if (content.length < 2){ //if userinput contains no message and oly username
             return "Please provide a message";
         }
+        DatagramSocket sendSocket = new DatagramSocket(); //open connection to the destination port
         for (int i = 1; i < content.length; i++){ //concat the data of the message to string
             data += content[i] + " ";
         }
@@ -186,7 +185,7 @@ public class ServerSession extends Thread
         for (ServerSession i : threadList){         //go through all servers and search for command
             if (i.getEntity().equals("SubServer")){
                 i.outputToClient.writeObject(command);
-                if (command.equals(".stop")) break; //If provided command is .stop shut down subserver
+                if (command.equals(commandPrefix + "stop")) break; //If provided command is .stop shut down subserver
                 String res = (String) i.inputFromClient.readObject();
                 if (res != null){             //If command was found return the result
                     return res;
