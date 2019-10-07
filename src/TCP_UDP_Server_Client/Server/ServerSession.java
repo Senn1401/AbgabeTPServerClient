@@ -2,6 +2,7 @@ package TCP_UDP_Server_Client.Server;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -11,6 +12,7 @@ public class ServerSession extends Thread
     private Socket socket;
     private String commandPrefix = ".";
     private String chatPrefix = "@";
+    private String filePrefix = "!";
     private ArrayList<ServerSession> threadList;
     private ObjectInputStream inputFromClient;
     private ObjectOutputStream outputToClient;
@@ -94,23 +96,47 @@ public class ServerSession extends Thread
     }
 
     private String chat(String command) throws IOException {
+        byte[] sendData = new byte[1024];
         String[] content = command.split(" ");
-        String data = username + ": "; //add the username to the message
         if (content.length < 2){ //if userinput contains no message and oly username
-            return "Please provide a message";
+            return "Please provide a message\n";
         }
-        DatagramSocket sendSocket = new DatagramSocket(); //open connection to the destination port
-        for (int i = 1; i < content.length; i++){ //concat the data of the message to string
-            data += content[i] + " ";
+        if (!map.containsKey(content[0].replace(chatPrefix, ""))){ //get port of user
+            return "User not found\n";
         }
-        byte[] sendData = data.getBytes();
         InetAddress ip = InetAddress.getByName("localhost"); //get ip of localhost
-        if (!map.containsKey(content[0].replace("@", ""))){ //get port of user
-            return "User not found";
+        DatagramSocket sendSocket = new DatagramSocket(); //open connection to the destination port
+        if (content[1].toCharArray()[0] == filePrefix.toCharArray()[0]){
+            File file = new File(content[1].replace(filePrefix, ""));
+            if (file.exists()){ //check if file exists
+                sendData = Files.readAllBytes(file.toPath()); //read data of file
+                byte[] infoBefore = new byte[1024];
+                infoBefore = (filePrefix + " " + username + " " + content[1].replace("!", "")).getBytes(); //create informations before sending file
+                DatagramPacket sendPacket = new DatagramPacket(infoBefore, infoBefore.length, ip, map.get(content[0].replace("@", "")));
+                sendSocket.send(sendPacket); //send informations
+                sendPacket = new DatagramPacket(sendData, sendData.length, ip, map.get(content[0].replace("@", "")));
+                try{
+                    sendSocket.send(sendPacket); //send fie
+                }catch (SocketException e){
+                    byte[] errData = new byte[1024];
+                    errData = "?fail".getBytes();
+                    DatagramPacket errPackage = new DatagramPacket(errData, errData.length, ip,  map.get(content[0].replace("@", "")));
+                    sendSocket.send(errPackage);
+                    return "File is too large to send\n";
+                }
+            }else{
+                return "IOError: File does not exist\n";
+            }
+        }else{
+            String data = username + ": "; //add the username to the message
+            for (int i = 1; i < content.length; i++){ //concat the data of the message to string
+                data += content[i] + " ";
+            }
+            sendData = data.getBytes();
+            //send content to destination user connection
+            DatagramPacket sendPackage = new DatagramPacket(sendData, sendData.length, ip, map.get(content[0].replace("@", "")));
+            sendSocket.send(sendPackage);
         }
-        //send content to destination user connection
-        DatagramPacket sendPackage = new DatagramPacket(sendData, sendData.length, ip, map.get(content[0].replace("@", "")));
-        sendSocket.send(sendPackage);
         return "";
     }
 

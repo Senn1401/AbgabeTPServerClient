@@ -30,7 +30,7 @@ public class Client {
 
             //create udp client to listen if something was send to this user
             //Read the port that gives the server to the client
-            new UDP_Client((Integer) inputFromServer.readObject());
+            Thread udp_client = new UDP_Client((Integer) inputFromServer.readObject());
 
             //read the input of the user until he sends quit
             while (!(input = scanner.next()).equals(prefix + "quit")){
@@ -38,6 +38,7 @@ public class Client {
                 System.out.print(inputFromServer.readObject());
             }
             outputToServer.writeObject(".quit"); //send quit command to serversession
+            udp_client.stop();
             socket.close(); //close connection
         } catch (SocketException e){
             System.out.println("No servers are online");
