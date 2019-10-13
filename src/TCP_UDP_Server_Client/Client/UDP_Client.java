@@ -24,7 +24,7 @@ public class UDP_Client extends Thread {
             DatagramPacket packet = new DatagramPacket(data, data.length); //wait for a package that has a byte array as data with the length given
             while (true){
                 datagramSocket.receive(packet); //Wait for message
-                String message = new String(packet.getData());
+                String message = new String(packet.getData()).trim();
                 if (message.toCharArray()[0] == '!'){ //message has fileprefix
                     datagramSocket.receive(packet); //recive package
                     if (new String(packet.getData()).equals("?fail")){

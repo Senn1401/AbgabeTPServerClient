@@ -23,10 +23,12 @@ public class Client {
 
             while(!(input = (String) inputFromServer.readObject()).equals("OK")){ //Ask for a username until the server says its ok
                 System.out.println(input);
+                System.out.print("> ");
                 username = scanner.next();
                 outputToServer.writeObject(username);
             }
             System.out.println(input);
+            System.out.print("> ");
 
             //create udp client to listen if something was send to this user
             //Read the port that gives the server to the client
@@ -36,6 +38,7 @@ public class Client {
             while (!(input = scanner.next()).equals(prefix + "quit")){
                 outputToServer.writeObject(input);
                 System.out.print(inputFromServer.readObject());
+                System.out.print("> ");
             }
             outputToServer.writeObject(".quit"); //send quit command to serversession
             udp_client.stop();

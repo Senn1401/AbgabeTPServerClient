@@ -49,7 +49,7 @@ public class ServerSession extends Thread
     public void run() {
         super.run();
         try {
-            this.entity = (String) inputFromClient.readObject(); //get the notation of the connected device
+            this.entity = ((String) inputFromClient.readObject()).replace("\r", ""); //get the notation of the connected device
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -61,9 +61,8 @@ public class ServerSession extends Thread
             try {
                 outputToClient.writeObject("Whats your username?");
                 while (true){ //get username of client
-                    String tempUsername = (String) inputFromClient.readObject();
-                    if (!tempUsername.contains(" ")){ //if username has correct format send ok
-                        this.username = tempUsername;
+                    String username = ((String) inputFromClient.readObject()).replace("\r", "");
+                    if (!username.contains(" ")){ //if username has correct format send ok
                         outputToClient.writeObject("OK");
                         break;
                     }
@@ -80,11 +79,11 @@ public class ServerSession extends Thread
             //Wait for commands
             while (true){
                 try {
-                    String command = (String) inputFromClient.readObject();
+                    String command = ((String) inputFromClient.readObject()).replace("\r", "");
                     if (command.equals(commandPrefix + "quit")){ //If User closes its session colse the server session
                         return;
                     }else {
-                        outputToClient.writeObject(executeCommand(command));
+                        outputToClient.writeObject(executeCommand(command).replace("\r", ""));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -142,15 +141,17 @@ public class ServerSession extends Thread
 
     //execute Commands send from user
     private String executeCommand(String command) throws IOException, ClassNotFoundException {
+        String tmp[] = command.split(" ");
+        tmp[0] = tmp[0].toLowerCase();
         if (!command.contains(commandPrefix) && !command.contains(chatPrefix)){ //if command not contains valid prefix return
-            return "Input is not a command";
+            return "Input is not a command \n";
         }
-        if (command.contains(commandPrefix + "time")) return time() + "\n"; //return time
-        else if (command.contains(commandPrefix + "date")) return date() + "\n"; //return date
-        else if (command.contains(commandPrefix + "auth")) return auth(command) + "\n"; //return if authenticated or not
-        else if (command.equals(commandPrefix + "stop")) stopServer();
-        else if (command.equals(commandPrefix + "users")) return users(); //return all users
-        else if (command.toCharArray()[0] == chatPrefix.toCharArray()[0]) return chat(command);
+        if (tmp[0].contains(commandPrefix + "time")) return time() + "\n"; //return time
+        else if (tmp[0].contains(commandPrefix + "date")) return date() + "\n"; //return date
+        else if (tmp[0].contains(commandPrefix + "auth")) return auth(command) + "\n"; //return if authenticated or not
+        else if (tmp[0].equals(commandPrefix + "stop")) stopServer();
+        else if (tmp[0].equals(commandPrefix + "users")) return users(); //return all users
+        else if (tmp[0].toCharArray()[0] == chatPrefix.toCharArray()[0]) return chat(command);
         //If command was not found search on subserver for it
         return executeOnSubServer(command) + "\n";
     }
@@ -210,9 +211,9 @@ public class ServerSession extends Thread
     private String executeOnSubServer(String command) throws IOException, ClassNotFoundException {
         for (ServerSession i : threadList){         //go through all servers and search for command
             if (i.getEntity().equals("SubServer")){
-                i.outputToClient.writeObject(command);
+                i.outputToClient.writeObject(command.replace("\r", ""));
                 if (command.equals(commandPrefix + "stop")) break; //If provided command is .stop shut down subserver
-                String res = (String) i.inputFromClient.readObject();
+                String res = ((String) i.inputFromClient.readObject()).replace("\r", "");
                 if (res != null){             //If command was found return the result
                     return res;
                 }
